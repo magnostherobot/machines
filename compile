@@ -1,0 +1,2 @@
+#!/bin/sh
+nim c -d:tmname=$1 -d:release -o:$1 tm.nim
