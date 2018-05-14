@@ -1,6 +1,8 @@
 import os
 
-import lib
+import docopt
+
+import tmachinespkg/lib
 
 const tmname {.strdefine.}: string = ""
 
@@ -11,8 +13,9 @@ when tmname.len > 0:
   else:
     echo "please specify a single string argument"
 else:
-  if paramCount() >= 2:
-    let tmd = parse(readFile(paramStr(1) & ".tm"))
-    echo makeDTM(tmd, paramStr(2)).test(true)
-  else:
-    echo "please specify a description and string input"
+  const doc = slurp("../USAGE.txt")
+
+  let args = docopt(doc)
+
+  let tmd = parse(readFile($args["<machine>"] & ".tm"))
+  echo makeDTM(tmd, $args["<input>"]).test(not args["--quiet"])
