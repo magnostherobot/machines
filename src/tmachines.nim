@@ -2,7 +2,7 @@ import os
 
 import docopt
 
-import tmachinespkg/lib
+import tmachinespkg/tm
 
 const tmname {.strdefine.}: string = ""
 
