@@ -1,21 +1,23 @@
-import os
+import os, strutils
 
 import docopt
 
-import tmachinespkg/tm
+from tmachinespkg/tm import nil
 
 const tmname {.strdefine.}: string = ""
 
 when tmname.len > 0:
-  const tmd = parse(slurp(tmname & ".tm"))
+  const tmd = parse(slurp(tmname))
   if paramCount() >= 1:
-    echo makeDTM(tmd, paramStr(1)).test(false)
+    echo makeDTM(tmd, paramStr(1)).test()
   else:
     echo "please specify a single string argument"
 else:
   const doc = slurp("../USAGE.txt")
 
   let args = docopt(doc)
+  let file = $args["<machine>"]
 
-  let tmd = parse(readFile($args["<machine>"] & ".tm"))
-  echo makeDTM(tmd, $args["<input>"]).test(not args["--quiet"])
+  if file.ends_with(".tm") or file.ends_with(".dtm"):
+    let tmd = tm.parse(readFile($args["<machine>"]))
+    echo tm.test(tm.makeDTM(tmd, $args["<input>"]), not args["--quiet"])
