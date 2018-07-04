@@ -5,7 +5,7 @@ type
   letter* = char
   input* = tuple[state: state, letter: letter]
 
-proc `$`(input: input): string =
+proc `$`*(input: input): string =
   "(" & $input[0] & " " & $input[1] & ")"
 
 type Direction* = enum
@@ -27,17 +27,29 @@ type transition* = tuple[
   toWrite: letter,
   moveDir: Direction]
 
-proc `$`(t: transition): string =
+proc `$`*(t: transition): string =
   "[" & $t.newState & " " & $t.toWrite & " " & $t.moveDir & "]"
 
 type tape* = Table[int, letter]
+
+proc hash*(this: tape): Hash =
+  return ($this).hash()
+
 type ttable* = Table[input, transition]
 
 type configuration* = object
-  currentState: state
-  tape: tape
-  position: int
-type config = configuration
+  current_state*: state
+  tape*: tape
+  position*: int
+type config* = configuration
+
+proc hash*(this: config): Hash =
+  ## Hashing configurations
+  var h: Hash = 0
+  h = h !& this.current_state.hash()
+  h = h !& this.tape.hash()
+  h = h !& this.position.hash()
+  return !$h
 
 # Parses a Direction from a string
 proc to_direction*(token: string): Direction =
@@ -61,12 +73,12 @@ proc `[]=`*(this: var configuration, i: int, l: letter) =
   this.tape[i] = l
 
 proc get_input*(this: configuration): input =
-  return (this.currentState, this[this.position])
+  return (this.current_state, this[this.position])
 
 proc move*(this: var config, trans: transition): config {.discardable.} =
   this.tape[this.position] = trans.toWrite
   this.position += cast[int](trans.moveDir)
-  this.currentState = trans.newState
+  this.current_state = trans.newState
   return this
 
 # Tape string conversion
@@ -90,7 +102,7 @@ proc tapeOf(input: string): tape =
   result = initTable[int, letter]()
   result.insert(input)
 
-proc load(
+proc load*(
   this: var configuration,
   input: string,
   reset: bool = true
@@ -101,21 +113,16 @@ proc load(
   return this
 
 ## Iterator over every line in a file
-proc lineIterator(f: File): (iterator(): TaintedString {.closure.}) =
+proc lineIterator*(f: File): (iterator(): TaintedString {.closure.}) =
   iterator yes(): TaintedString {.closure.} =
     var line: TaintedString
     while readLine(f, line):
       yield line
   return yes
 
-iterator characters(filename: string): char =
-  for line in lines filename:
-    for letter in line:
-      yield letter
-
 proc make_configuration*(start: state, input: string): configuration =
   return configuration(
-    currentState: start,
+    current_state: start,
     tape: tapeOf(input),
     position: 0,
     )

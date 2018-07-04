@@ -12,25 +12,25 @@ type DTM* = ref object
   transitions*: Table[(state, letter), transition]
   configuration*: configuration
 
-proc `[]`(this: DTM, i: int): letter =
+proc `[]`*(this: DTM, i: int): letter =
   return this.configuration[i]
 
-proc `[]=`(this: DTM, i: int, l: letter) =
+proc `[]=`*(this: DTM, i: int, l: letter) =
   this.configuration[i] = l
 
-proc `$`(this: DTM): string =
+proc `$`*(this: DTM): string =
   return $this.configuration
 
 proc make_configuration*(desc: description, input: string): configuration =
   return make_configuration(desc.initial_state, input)
 
-## Construct a TM description from an iterator of rules from a description file
 proc parse*(description: string): description =
+  ## Construct a TM description from an iterator of rules from a .dtm file
   var noStates = -1
   var statesSeen = -1
   var transitions = init_table[input, transition]()
   var acceptingStates = init_set[state]()
-  var currentState = cast[state]("")
+  var current_state = cast[state]("")
   var alphabet = false
   for line in description.split_lines:
     # If the line is empty
@@ -48,7 +48,7 @@ proc parse*(description: string): description =
         acceptingStates.incl(split[0])
       # If it's the first state mentioned
       if statesSeen == 0:
-        currentState = (split[0])
+        current_state = (split[0])
       statesSeen += 1
     # If we haven't seen the alphabet yet
     elif not alphabet:
@@ -69,7 +69,7 @@ proc parse*(description: string): description =
       transitions[(ins, inl)] = transition
     # Next line
   return description(
-    initial_state: currentState,
+    initial_state: current_state,
     acceptingStates: acceptingStates,
     transitions: transitions
     )

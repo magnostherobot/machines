@@ -1,8 +1,8 @@
 #!/bin/sh
 
 function rndm {
-  for i in {1..100} ; do
-    echo -n $(($RANDOM % 3 ))
+  for i in {1..20} ; do
+    echo -n $(($RANDOM % 3))
   done
 }
 

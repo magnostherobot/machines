@@ -1,0 +1,9 @@
+states 3
+S
+E
+A +
+alphabet 2 a b
+S a S a R
+S b S b R
+S a E a R
+E _ A _ R

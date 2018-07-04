@@ -3,5 +3,6 @@ TMachine: a Turing machine emulator.
 Usage: tmachines [options] <machine> <input>
 
 Options:
-  -q --quiet  Only output "true" or "false"
-  -h --help   Show this help message.
+  -q --quiet        Only output "true" or "false"
+  -h --help         Show this help message.
+  -t --type=<type>  Specify type of machine (inferred from extension otherwise).

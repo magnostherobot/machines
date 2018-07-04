@@ -7,8 +7,8 @@ for file in `ls -1 $1` ; do
   if [ -e "$1/$file/testgen.sh" ] ; then
     "$1/$file/testgen.sh" 50 | while read line ; do
       split=($line)
-      echo ./tmachines $1/$file/$file.tm $line
-      test "./tmachines --quiet $1/$file/$file.tm ${split[0]}" ${split[1]}
+      echo ./tmachines $1/$file/$file'.*tm' $line
+      test "./tmachines --quiet $1/$file/$file"'.*tm'" ${split[0]}" ${split[1]}
     done
   fi
 done
